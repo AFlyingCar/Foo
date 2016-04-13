@@ -36,10 +36,6 @@ int getFiles(const char* root, std::vector<const char*>& files){
     return 0;
 }
 
-int getFiles(std::string& root, std::vector<const char*>& files){
-    return getFiles(root.c_str(),files);
-}
-
 int main(int argc, char const *argv[])
 {
     printf("Hello, today I will be fucking up your computer.");
