@@ -34,11 +34,11 @@ int get_file_count_ci(const char* root,int count_start){
     struct dirent* entry;
     int count = count_start;
     if(!(dir = opendir(root)) || !(entry = readdir(dir)))
-        return 1;
+        return 0;
     do{
         if(strcmp(entry->d_name,".")==0||strcmp(entry->d_name,"..")) continue;
         if(entry->d_type == DT_DIR){
-            get_file_count_ci(root,count);
+            count += get_file_count_ci(root,count);
         }else{
             count++;
         }
